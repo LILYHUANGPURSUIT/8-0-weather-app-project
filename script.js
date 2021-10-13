@@ -59,18 +59,9 @@ function displaySection (input) {
             //         <li>Max Temperature: ${weatherInfo.maxtempF}</li>
             //         <li>Min Temperature: ${weatherInfo.mintempF}</li>`)
 
-
-
-
-                        // console.log(weatherInfo.avgtempF)
-                        // console.log(weatherInfo.maxtempF)
-                        // console.log(weatherInfo.mintempF)
-
-                        
                     // weatherInfo.date = todayTemp.textContent;
                         // console.log(weatherInfo.date)
                     
-                    // console.log(avgtemp)
         // }
         
             // }
@@ -84,21 +75,18 @@ function displaySection (input) {
 //     console.log(err);
 // })
 
-let historyList = document.querySelector("#history-list");
+            let historyList = document.querySelector("#history-list");
 
             let historyListItem = document.createElement("li");
-            historyListItem.classList.add("history-list-item");
-            // historyListItem.textContent = " - " + data.current_condition[0].FeelsLikeF + "°F";
+            let feelLikeF = document.createElement("span");
+            feelLikeF.textContent = " - " + data.current_condition[0].FeelsLikeF + "°F";
     
             let linkToInfo = document.createElement("a");
             linkToInfo.setAttribute("href", "#");
             linkToInfo.textContent = displayCity;
     
-            // linkToInfo.textContent += " - " + data.current_condition[0].FeelsLikeF + "°F";
-            // historyListItem.textContent = cityName.value + " - " + data.current_condition[0].FeelsLikeF + "°F";
-    
+            historyListItem.append(linkToInfo, feelLikeF);
             historyList.append(historyListItem);
-            historyListItem.append(linkToInfo);
 
             
 
