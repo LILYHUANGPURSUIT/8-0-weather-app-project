@@ -1,106 +1,94 @@
 let cityName = document.querySelector("#input-text");
-
-let form = document.querySelector("#page-header");
-let h2 = document.querySelector("#display-city");
-let area = document.querySelector("#area");
-let region = document.querySelector("#region");
-let country = document.querySelector("#country");
-let currently = document.querySelector("#currently");
-let todayTemp = document.querySelector("#todayTemp");
-let tomorrowTemp = document.querySelector("#tomorrowTemp");
-let dayAfterTemp = document.querySelector("#dayAfterTemp");
+let displaySectionContent = document.querySelector("#display-section");
+let threeDaysWeather = document.querySelector("#three-days-weather");
+let form = document.querySelector("form");
+let todayTemp = document.createElement("div");
+let tomorrowTemp = document.createElement("div");
+let dayAfterTemp = document.createElement("div");
 
 form.addEventListener("submit", (event)=> {
     event.preventDefault();
     let input = cityName.value;
+    
     displaySection(input,true);
+    form.reset();
 });
 
-function displaySection (input,ShouldDisplay) {
-    fetch(`https://wttr.in/${input}?format=j1`)
-        .then((res)=>{
-            return res.json();
-        }).then((data)=>{ 
-            let displayCity = input[0].toUpperCase() + input.slice(1).toLowerCase();
-            h2.textContent = displayCity;
+function displaySection (inputCity,ShouldDisplay) {
+    let url = `https://wttr.in/${inputCity}?format=j1`
+    fetch(url)
+        .then((res)=>res.json())
+        .then((data) => {
+            let displayCity = inputCity.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 
-            area.textContent = "Area: " + data.nearest_area[0].areaName[0].value;
-            region.textContent = "Region: " + data.nearest_area[0].region[0].value;
-            country.textContent = "Country: " + data.nearest_area[0].country[0].value;
-            currently.textContent = "Currently: " + data.current_condition[0].FeelsLikeF + "°F";
-        console.log(data);
-            cityName.value = " ";
+            // cityName.value = " ";
 
-            todayTemp.innerHTML = `<span><li>Average Temperature: ${data.weather[0].avgtempF}°F</li></span>
+            displaySectionContent.innerHTML = `
+                <h2>${displayCity}</h2>
+                <p class="display-info">
+                <span><strong>Area: </strong>${data.nearest_area[0].areaName[0].value}</span>
+                <span><strong>Region: </strong>${data.nearest_area[0].region[0].value}</span>
+                <span><strong>Country: </strong>${data.nearest_area[0].country[0].value}</span>
+                <span><strong>Currently: </strong>Feels Like ${data.current_condition[0].FeelsLikeF}°F</span>
+                </p>
+            `
+            threeDaysWeather.append(todayTemp, tomorrowTemp, dayAfterTemp);
+
+            todayTemp.innerHTML = `
+                                <h3>Today</h3> 
+                                <ul>
+                                <span><li>Average Temperature: ${data.weather[0].avgtempF}°F</li></span>
                                 <span><li>Max Temperature:  ${data.weather[0].maxtempF}°F</li></span>
-                                <span><li>Min Temperature: ${data.weather[0].mintempF}°F</li></span>`
+                                <span><li>Min Temperature: ${data.weather[0].mintempF}°F</li></span>
+                                </ul>`
 
-            tomorrowTemp.innerHTML = `<span><li>Average Temperature: ${data.weather[1].avgtempF}°F</li></span>
+            tomorrowTemp.innerHTML = `
+                                    <h3>Tomorrow</h3>
+                                    <ul>
+                                    <span><li>Average Temperature: ${data.weather[1].avgtempF}°F</li></span>
                                     <span><li>Max Temperature:  ${data.weather[1].maxtempF}°F</li></span>
-                                    <span><li>Min Temperature: ${data.weather[1].mintempF}°F</li></span>`
+                                    <span><li>Min Temperature: ${data.weather[1].mintempF}°F</li></span>
+                                    </ul>`
 
 
-            dayAfterTemp.innerHTML = `<span><li>Average Temperature: ${data.weather[2].avgtempF}°F</li></span>
+            dayAfterTemp.innerHTML = `
+                                    <h3>Day After Tomorrow</h3>
+                                    <ul>
+                                    <span><li>Average Temperature: ${data.weather[2].avgtempF}°F</li></span>
                                     <span><li>Max Temperature:  ${data.weather[2].maxtempF}°F</li></span>
-                                    <span><li>Min Temperature: ${data.weather[2].mintempF}°F</li></span>`
+                                    <span><li>Min Temperature: ${data.weather[2].mintempF}°F</li></span>
+                                    </ul>`
 
+            
+            let historyList = document.querySelector(".history ul");
+            if(ShouldDisplay){
+            // let historyList = document.querySelector("ul");
 
-            // let tempInfo = document.querySelectorAll(".tempInfo");
-            // let today = document.querySelector("#todayTemp");
-            // let tomorrow = document.querySelector("#tomorrowTemp");
-            // let dayAfterTomorrow = document.querySelector("dayAfterTemp");
-
-            // let threeDaysWeahther = [today,tomorrow,dayAfterTomorrow];
-
-            // for (let oneDayWeather of threeDaysWeahther) {
-            //     for (let weatherInfo of data.weather) {
-            //         // console.log(weatherInfo)
-            //         tempInfo.innerHTML(`<li>Average Temperature: ${weatherInfo.avgtempF}</li>
-            //         <li>Max Temperature: ${weatherInfo.maxtempF}</li>
-            //         <li>Min Temperature: ${weatherInfo.mintempF}</li>`)
-
-                    // weatherInfo.date = todayTemp.textContent;
-                        // console.log(weatherInfo.date)
-                    
-        // }
+                let historyListItem = document.createElement("li");
+                let feelLikeF = document.createElement("span");
+                feelLikeF.textContent = " - " + data.current_condition[0].FeelsLikeF + "°F";
         
-            // }
-// .catch((err)=>{
-//     console.log(err);
-// })
-        if(ShouldDisplay){
-            let historyList = document.querySelector("#history-list");
+                let linkToInfo = document.createElement("a");
+                linkToInfo.setAttribute("href", "#");
+                linkToInfo.textContent = displayCity;
+                
+                // historyListItem.append(linkToInfo, feelLikeF);
+                // historyList.append(historyListItem);   
 
-            let historyListItem = document.createElement("li");
-            let feelLikeF = document.createElement("span");
-            feelLikeF.textContent = " - " + data.current_condition[0].FeelsLikeF + "°F";
+            
+            
+                linkToInfo.addEventListener("click", (e)=> {
+                    let city = e.target.innerText.toLowerCase();
+                    displaySection(city, false);
     
-            let linkToInfo = document.createElement("a");
-            linkToInfo.setAttribute("href", "#");
-            linkToInfo.textContent = displayCity;
-    
-            historyListItem.append(linkToInfo, feelLikeF);
-            historyList.append(historyListItem);
+                })
+                historyListItem.append(linkToInfo, feelLikeF);
+                historyList.append(historyListItem);  
+            }
 
-        // }    
+        })
+        .catch((err) => {
+            console.log (err);
+        })
+    }
 
-        
-        
-            linkToInfo.addEventListener("click", (e)=> {
-                    e.preventDefault();
-        
-            displaySection(displayCity, false);
- 
-            })
-        }
-    })
-    .catch((err) => {
-        console.log (err);
-    })
-
-}
-
-// linkToInfo.addEventListener("click", (e)=> {
-//     e.preventDefault();
-//     displaySection(displayCity);
-// })
