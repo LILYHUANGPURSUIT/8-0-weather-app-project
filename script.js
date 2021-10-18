@@ -78,7 +78,7 @@ function displaySection (inputCity,ShouldDisplay) {
             
             
                 linkToInfo.addEventListener("click", (e)=> {
-                    let city = e.target.innerText.toLowerCase();
+                    let city = e.target.innerText;
                     displaySection(city, false);
     
                 })
